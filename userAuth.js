@@ -14,9 +14,6 @@ const domains = new Set(process.env.APPROVED_DOMAINS.split(/,\s?/g))
 passport.use(new GoogleStrategy.Strategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  // msch: Need to supply a full URI here or we'll get a HTTP redirect.
-  // File otherwise unchanged from upstream 2c59f00ba2a5352820a5bc67804ae179a7450fa1
-  callbackURL: 'https://library.pspdfkit.com/auth/redirect',
   userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   passReqToCallback: true
 }, (request, accessToken, refreshToken, profile, done) => done(null, profile)))
@@ -36,6 +33,10 @@ passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((obj, done) => done(null, obj))
 
 router.get('/login', passport.authenticate('google', {
+  // msch: Need to supply a full URI here or we'll get a HTTP redirect.
+  // File otherwise unchanged from upstream 2c59f00ba2a5352820a5bc67804ae179a7450fa1
+  // moved it from above
+  callbackURL: 'https://library.pspdfkit.com/auth/redirect',
   scope: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile'
